@@ -5,6 +5,7 @@ library(foreign)
 setwd("C:/Users/dnl0009/Documents/ArcGIS/_THESIS/Landscape/")
 RP_landuse <- read.dbf("RP_1km.dbf") # read in files
 FPR3_ls <- read.dbf("FPR3_1km.dbf")
+FPR3_ls$PERCENT_LA <- (FPR3_ls$PERCENT_LA)*100 # I forgot to do this in GIS
 #######################################
 
 PLUS <- cbind(RP_landuse[,4],FPR3_ls[,4])   ## Bind percent values as one
