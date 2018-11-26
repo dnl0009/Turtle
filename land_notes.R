@@ -2,7 +2,7 @@
 
 # SET THE STAGE #
 library(foreign)
-setwd("C:/Users/dnl0009/Documents/ArcGIS/_THESIS/Landscape/")
+setwd("G:/My Drive/Survey Data/_THESIS/Landscape/")
 RP_landuse <- read.dbf("RP_1km.dbf") # read in files
 FPR3_ls <- read.dbf("FPR3_1km.dbf")
 FPR3_ls$PERCENT_LA <- (FPR3_ls$PERCENT_LA)*100 # I forgot to do this in GIS
@@ -51,32 +51,55 @@ UDC1L <- ldf[[20]]
 UDC2L <- ldf[[21]]
 WPL <- ldf[[22]]
 
-#####
-# Fix different length columns by filling NA values
-# THIS DID NOT WORK
-n <- max(length(PLUS),length(Farm1L[,4]),length(Farm2L[,4]),length(Farm3L[,4]),length(FPR1L[,4]),length(FPR2L[,4]),length(FPR4L[,4]),length(FPR5L[,4]),length(FPR6L[,4]),length(FPR7L[,4]),length(FPR8L[,4]),length(FPR9L[,4]),length(HPL[,4]),length(JesseL[,4]),length(Keener1L[,4]),length(LaurelL[,4]),length(RRL[,4]),length(UDC1L[,4]),length(UDC2L[,4]),length(WPL[,4])); n
-length(PLUS)
-length(Farm1L) <- n; length(Farm1L); Farm1L
-length(Farm2L) <- n
-length(Farm3L) <- n
-length(FPR1L) <- n
-length(FPR2L) <- n
-length(FPR4L) <- n
-length(FPR5L) <- n
-length(FPR6L) <- n
-length(FPR7L) <- n
-length(FPR8L) <- n
-length(FPR9L) <- n
-length(HPL) <- n
-length(JesseL) <- n
-length(Keener1L) <- n
-length(LaurelL) <- n
-length(RRL) <- n
-length(UDC1L) <- n
-length(UDC2L) <- n
-length(WPL) <- n
+####################################
+## I'll combine the data with similar lengths.
 
-# Combine everything ### THIS IS CLOSE ###
-PLUS <- rowr::cbind.fill(PLUS,Farm1L[,4],Farm2L[,4],Farm3L[,4],FPR1L[,4],FPR2L[,4],FPR4L[,4],FPR5L[,4],FPR6L[,4],FPR7L[,4],FPR8L[,4],FPR9L[,4],HPL[,4],JesseL[,4],Keener1L[,4],LaurelL[,4],RRL[,4],UDC1L[,4],UDC2L[,4],WPL[,4],fill=NA); PLUS
+PLUS13 <- cbind(PLUS,FPR1L[,4],FPR2L[,4],FPR4L[,4],FPR5L[,4],FPR6L[,4],FPR7L[,4],FPR9L[,4],RRL[,4],UDC1L[,4]); PLUS13
+colnames(PLUS13) <- c("VALUE","RP","FPR3","FPR1","FPR2","FPR4","FPR5","FPR6","FPR7","FPR9","RR","UDC1"); PLUS13
+PLUS13[,4:12] <- round(PLUS13[,4:12],3); PLUS13 ## This works
 
-PLUS <- merge(PLUS,Farm1L[,4],Farm2L[,4],Farm3L[,4],FPR1L[,4],FPR2L[,4],FPR4L[,4],FPR5L[,4],FPR6L[,4],FPR7L[,4],FPR8L[,4],FPR9L[,4],HPL[,4],JesseL[,4],Keener1L[,4],LaurelL[,4],RRL[,4],UDC1L[,4],UDC2L[,4],WPL[,4],by="VALUE",all.x=TRUE,all.y=TRUE); PLUS
+PLUS12 <- cbind(Farm2L[,c(1,4)],HPL[,4],UDC2L[,4],WPL[,4])
+colnames(PLUS12) <- c("VALUE","Farm2","HPL","UDC2","WPL")
+PLUS12[,2:5] <- round(PLUS12[,2:5],3)
+PLUS12
+
+PLUS1 <- merge(PLUS13,PLUS12,by="VALUE",all=TRUE)
+
+PLUS9 <- cbind(Farm1L[,c(1,4)],Keener1L[,4],LaurelL[,4])
+colnames(PLUS9) <- c("VALUE","Farm1","Keener1","Laurel")
+PLUS9[,2:4] <- round(PLUS9[,2:4],3) # Don't forget the ,3; otherwise it'll round to the nearest 1
+PLUS9
+
+PLUS1 <- merge(PLUS1,PLUS9,by="VALUE",all=TRUE); PLUS1 # Don't forget the ALL=TRUE
+#Otherwise, it'll cut off the data to the shortest dataframes
+
+PLUS10 <- cbind(FPR8L[,c(1,4)],JesseL[,4])
+colnames(PLUS10) <- c("VALUE","FPR8","Jesse")
+PLUS10[,2:3] <- round(PLUS10[,2:3],3)
+PLUS10
+
+PLUS1 <- merge(PLUS1,PLUS10,by="VALUE",all=T); PLUS1
+
+PLUS1 <- PLUS1[,c(1,4,5,3,6,7,8,9,20,10,12,15,11,2,21,14,16,18,19,17,13)]; PLUS1
+PLUS <- merge(PLUS1,Farm3L[,c(1,4)],by="VALUE",all=T) # Poor little lone wolf
+PLUS[,22] <- round(PLUS[,22],3)
+colnames(PLUS) <- c("VALUE","FPR1","FPR2","FPR3","FPR4","FPR5","FPR6","FPR7","FPR8","FPR9","UDC1","UDC2","RR","RP","Jesse","Hodges","Wolfe","Keener1","Laurel","Farm1","Farm2","Farm3")
+PLUS <- PLUS[,2:22] # Don't need the value column anymore 
+
+####################################################################
+###################################################################
+#################### MOVING ON ####################################
+####################  TO THE   ####################################
+#################### GRAPHING  #####################################
+###################################################################
+###################################################################
+
+PLUS <- as.matrix(PLUS) # Need to get rid of the NA values I worked so hard to get -- HA!
+PLUS[is.na(PLUS)] <- 0; PLUS # Because the bars cannot be drawn with NA values
+plot1 <- barplot(prop.table(PLUS,2),main="Landscape Mosaics within 1 km of Each Site",font.main=4,xlab="Site",ylab="Proportion of Hectares (%)",col=colorRamps::primary.colors(13),las=2,cex.names = 0.8,font.lab=2)
+legend("bottomleft",legend=c("Forested","Grass/Past/Ag","Barren/Dev",
+                             "OpenWater","MineGrass","MineBarren",
+                             "SMCRAForest","PreSMCRAGrass","PreSMCRABarren",
+                             "PreSMCRAForested","HerbaceousWetland",
+                             "WoodyWetland","Road"),cex=0.5, inset= c(0.175,0.01), fill=colorRamps::primary.colors(13))
+## EXACTEMENT! :D
