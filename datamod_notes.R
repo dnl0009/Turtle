@@ -33,7 +33,7 @@ which(turtle$WT_g == ">10KG") # Double check
 turtle$WT_g <- as.integer(turtle$WT_g) # Can now change class to integer like the rest of
 # the measurements
 
-## CSpres$WT_g[203] <- 1300 ??
+## CSpres$WT_g[203] <- 1300 ?? Nope... that's Gigantor. He's 13,000 g.
 
 
 #### Simplify trap size input values ####
