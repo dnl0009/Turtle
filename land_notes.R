@@ -132,7 +132,16 @@ legend("bottomleft",bg="white",legend=c("Forested","Grass/Past/Ag","Barren/Dev",
 ###################################################################
 
 survey <- PLUS[,c(1:3,12:14)] # Pick out sites that have been surveyed for presab comparison
-t(survey) # Flip data frame for adding presab column (for both CP and CS) 
+survey <- t(survey) # Flip data frame for adding presab column (for both CP and CS)
 ## T stands for TRANSPOSE, which means "to trade places"
+survey <- as.data.frame(survey[,1:2]) # I think I only want to look at forested and ag 
+## These are the primary landscape drivers
+## I am making it a dataframe so I can add the third presab column $$$
 
+### Bringing in the presab information ###
+survey$site <- c("FPR_1","FPR_2","FPR_3","RUBY_RUN","RUBY_POND","RESERVOIR"); survey
+survey$CSpres <- ifelse(survey$site %in% CSpres,1,0)
+survey$CPpres <- ifelse(survey$site %in% CPpres,1,0)
+
+### Occupancy may not be the best way to go about it since these species are fairly common
 
