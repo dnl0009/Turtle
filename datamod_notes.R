@@ -55,9 +55,10 @@ recap <- unique(which(turtle$Recap == "Y")); recap <- turtle[recap,]; recap
 
 #### Foreshadowing ####
 pres <- which(turtle$WT_g > 1) # Check list of rows that have turtles
-### Curiosity... 
 length(pres) # I'm lazy and don't want to count values
 pres <- turtle[pres,] # Create new data frame with all occupied trap locations
-CPpres <- unique(pres$Locality[pres$Genus == "Chrysemys"])
-CSpres <- unique(pres$Locality[pres$Genus == "Chelydra"])
+CPpres <- as.character(unique(pres$Locality[pres$Genus == "Chrysemys"]))
+CSpres <- as.character(unique(pres$Locality[pres$Genus == "Chelydra"]))
+
+
 
