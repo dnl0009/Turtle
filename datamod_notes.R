@@ -1,3 +1,7 @@
+######################################################
+#### land_notes.R is a complement to this RScript #### 
+######################################################
+
 ####### SET THE STAGE #########
 setwd("C:/Users/Darien Lozon/Desktop/") # Find trapdata18 file
 turtle <- read.csv("trapdata18.csv",header=TRUE, na.strings = "") # Bring in file
@@ -60,5 +64,11 @@ pres <- turtle[pres,] # Create new data frame with all occupied trap locations
 CPpres <- as.character(unique(pres$Locality[pres$Genus == "Chrysemys"]))
 CSpres <- as.character(unique(pres$Locality[pres$Genus == "Chelydra"]))
 
+head(pres[,c("Locality","Genus","Species")])
+abundanturtle <- aggregate(pres,by=list(pres$Locality,pres$Genus),FUN=length)
+abundanturtle <- abundanturtle[,1:3]
+abundanturtle$Species <- c(rep("serpentina",5),rep("picta",6))
+colnames(abundanturtle) <- c("Locality","Genus","Abundance","Species")
+abundanturtle <- abundanturtle[,c(1,2,4,3)]; abundanturtle
 
 
